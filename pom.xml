@@ -43,22 +43,22 @@
         <version>${logback.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback-deployment</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback-impl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback-impl-deployment</artifactId>
         <version>${project.version}</version>
       </dependency>
