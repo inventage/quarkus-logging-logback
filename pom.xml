@@ -24,7 +24,7 @@
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <quarkus.version>2.14.2.Final</quarkus.version>
+    <quarkus.version>2.16.3.Final</quarkus.version>
     <logback.version>1.2.11</logback.version>
     <maven.deploy.skip>true</maven.deploy.skip> <!-- we deploy via nexus-staging-maven-plugin -->
   </properties>
@@ -61,11 +61,6 @@
         <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback-impl-deployment</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>3.5.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
