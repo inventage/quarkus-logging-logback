@@ -7,7 +7,7 @@
     <version>11</version>
   </parent>
 
-  <groupId>io.quarkiverse.logging.logback</groupId>
+  <groupId>com.inventage.quarkus-logging-logback</groupId>
   <artifactId>quarkus-logging-logback-parent</artifactId>
   <version>0.14.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -43,22 +43,22 @@
         <version>${logback.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback-deployment</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback-impl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.quarkiverse.logging.logback</groupId>
+        <groupId>com.inventage.quarkus-logging-logback</groupId>
         <artifactId>quarkus-logging-logback-impl-deployment</artifactId>
         <version>${project.version}</version>
       </dependency>
