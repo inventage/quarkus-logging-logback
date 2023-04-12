@@ -1,0 +1,150 @@
+pipeline {
+    agent {
+        node {
+            label 'java11'
+        }
+    }
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        timeout(time: 15, unit: 'MINUTES')
+        ansiColor('xterm')
+    }
+
+    environment {
+        LINE_SEPARATOR = '================================================================================'
+        CI_REGISTRY_CREDS = credentials('inventage-projectware')
+        BUILD_STATUS_EMAIL_RECIPIENTS = 'ktang@inventage.com'
+    }
+
+    tools {
+        maven 'maven-release-latest'
+        jdk 'Open-JDK-11'
+    }
+
+    stages {
+        stage('Initialize') {
+            steps {
+                sh 'echo Initialize'
+
+                step([$class: 'WsCleanup'])
+                checkout scm
+
+                // Change the snapshot version in all pom.xml files to a release candidate version
+                updateVersion()
+
+                // Set environment variables from pom.xml
+                setPackageEnvironmentVariables()
+
+                // Update build information in Jenkins
+                script {
+                    currentBuild.displayName = "Build: #${env.BUILD_NUMBER}"
+                    currentBuild.description = "Version: ${env.PACKAGE_VERSION}"
+                }
+                // Display important environment variables
+                sh '''
+                    set +x
+                    echo "Environment variables:"
+
+                    echo $LINE_SEPARATOR
+                    echo "PACKAGE_VERSION = $PACKAGE_VERSION"
+                    echo "PACKAGE_GROUP_ID = $PACKAGE_GROUP_ID"
+                    echo "PACKAGE_ARTIFACT_ID = $PACKAGE_ARTIFACT_ID"
+
+
+                    echo "PROMOTION_TAG = $PROMOTION_TAG"
+                    echo "PROMOTION_REPO_NAME = $PROMOTION_REPO_NAME"
+
+                    echo $LINE_SEPARATOR
+                '''
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'echo Build'
+
+                sh 'mvn help:system'
+
+                mvn("-s .jenkins/settings.xml", "-Djava.io.tmpdir=${WORKSPACE}", "clean", "deploy")
+                script {
+                    env.STAGING_REPOSITORY_ID = util.stagingRepositoryId('./target/nexus-staging/staging/ea3c1b1825f57.properties')
+                }
+            }
+        }
+
+        stage ('Trigger Release Pipeline') {
+            steps {
+                build job: 'Inventage/Projectware/Quarkiverse Logging Logback/RegisterCandidate', parameters: [string(name: 'nexus2StagingRepositoryId', value: "${env.STAGING_REPOSITORY_ID}")]
+            }
+        }
+
+    }
+
+    post {
+        always {
+            deleteDir()
+            sendNotifications()
+        }
+    }
+}
+
+/**
+ * Returns the "version suffix"  variable. The format is `yyyyMMddhhmm-${JENKINS_BUILD_NUMBER}-${GIT_COMMIT_HASH}`
+ *
+ * @return
+ */
+def getVersionSuffix() {
+    def separator = '-'
+    def now = sh(script: 'date -u +%Y%m%d%H%M', returnStdout: true).trim()
+    def gitCommitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+
+    return now + separator + "${env.BUILD_NUMBER}" + separator + gitCommitHash
+}
+
+/**
+ * Sets the appropriate version in `pom.xml`.
+ */
+void updateVersion() {
+    sh 'echo UpdateVersion'
+    env.VERSION_SUFFIX = getVersionSuffix()
+
+    versiontiger('.')
+}
+
+def versiontiger(reactorFolder) {
+    dir(reactorFolder) {
+        sh 'mvn com.inventage.tools.versiontiger:versiontiger-maven-plugin:execute -B -DstatementsFile=.jenkins/jenkins.versiontiger'
+    }
+}
+
+/**
+ * Sets important values defined in reactor pom.xml as environment variables.
+ */
+void setPackageEnvironmentVariables() {
+    // @see https://jenkins.io/doc/pipeline/steps/pipeline-utility-steps/#readmavenpom-read-a-maven-project-file
+    // @see http://maven.apache.org/components/ref/3.3.9/maven-model/apidocs/org/apache/maven/model/Model.html
+    def pom = readMavenPom file: 'pom.xml'
+
+    env.PACKAGE_VERSION = pom.version
+    env.PACKAGE_GROUP_ID = pom.groupId
+    env.PACKAGE_ARTIFACT_ID = pom.artifactId
+    env.PROMOTION_TAG = "${env.PACKAGE_GROUP_ID}_${env.PACKAGE_VERSION}"
+    env.PROMOTION_REPO_NAME = pom.properties['docker.promotion.repository.name']
+}
+
+def mvn(Map options = [:], CharSequence... goals) {
+    util.mvn(options, goals)
+}
+
+def iqEvaluation(application, scanPattern) {
+    nexusPolicyEvaluation failBuildOnNetworkError: false, iqApplication: application, iqScanPatterns: [[scanPattern: scanPattern]], iqStage: 'build', jobCredentialsId: "${env.IQ_SERVER_CREDENTIALS_ID}"
+}
+
+/**
+ * Sends notifications about the build status.
+ *
+ * @return
+ */
+def sendNotifications() {
+    step([$class: 'Mailer', notifyEveryUnstableBuild: true, recipients: "${env.BUILD_STATUS_EMAIL_RECIPIENTS}", sendToIndividuals: false])
+}

@@ -6,7 +6,8 @@
     <artifactId>quarkiverse-parent</artifactId>
     <version>11</version>
   </parent>
-  <groupId>io.quarkiverse.logging.logback</groupId>
+
+  <groupId>com.inventage.quarkus-logging-logback</groupId>
   <artifactId>quarkus-logging-logback-parent</artifactId>
   <version>0.14.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -25,6 +26,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <quarkus.version>2.14.2.Final</quarkus.version>
     <logback.version>1.2.11</logback.version>
+    <maven.deploy.skip>true</maven.deploy.skip> <!-- we deploy via nexus-staging-maven-plugin -->
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -73,6 +75,17 @@
         <plugin>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.plugins</groupId>
+          <artifactId>nexus-staging-maven-plugin</artifactId>
+          <version>1.6.8</version>
+          <configuration>
+            <serverId>inventage-keycloak-nexus2</serverId>
+            <nexusUrl>https://nexus.inventage.com</nexusUrl>
+            <stagingProfileId>ea3c1b1825f57</stagingProfileId>
+            <skipStaging>false</skipStaging>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
