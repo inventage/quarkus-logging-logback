@@ -76,18 +76,6 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler-plugin.version}</version>
         </plugin>
-        <!-- for staging with Nexus2 -->
-        <plugin>
-          <groupId>org.sonatype.plugins</groupId>
-          <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.5</version>
-          <extensions>true</extensions>
-          <configuration>
-            <serverId>inventage-portal-staging</serverId>          <!-- auch im Jenkins Config File "settings.xml" referenziert -->
-            <nexusUrl>https://nexus.inventage.com</nexusUrl>
-            <stagingProfileId>ea3c1b1825f57</stagingProfileId>          <!-- inventage-portal staging -->
-          </configuration>
-        </plugin>
       </plugins>
     </pluginManagement>
     <resources>
@@ -109,6 +97,35 @@
       <modules>
         <module>integration-tests</module>
       </modules>
+    </profile>
+
+    <profile>
+      <id>jenkins</id>
+      <properties>
+        <!--
+            Use the environment variable PACKAGE_VERSION (should be set on Jenkins) as build version
+        -->
+        <!--suppress UnresolvedMavenProperty -->
+        <build.version>${env.PACKAGE_VERSION}</build.version>
+      </properties>
+      <build>
+        <plugins>
+          <!-- for staging with Nexus2 -->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.5</version>
+            <extensions>true</extensions>
+            <configuration>
+              <!-- auch im Jenkins Config File "settings.xml" referenziert -->
+              <serverId>inventage-portal-staging</serverId>
+              <nexusUrl>https://nexus.inventage.com</nexusUrl>
+              <!-- inventage-portal staging -->
+              <stagingProfileId>ea3c1b1825f57</stagingProfileId>          <!-- inventage-portal staging -->
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 </project>
