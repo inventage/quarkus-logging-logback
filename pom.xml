@@ -118,7 +118,7 @@
             <extensions>true</extensions>
             <configuration>
               <!-- auch im Jenkins Config File "settings.xml" referenziert -->
-              <serverId>inventage-portal-staging</serverId>
+              <serverId>inventage-projectware</serverId>
               <nexusUrl>https://nexus.inventage.com</nexusUrl>
               <!-- inventage-portal staging -->
               <stagingProfileId>ea3c1b1825f57</stagingProfileId>          <!-- inventage-portal staging -->
