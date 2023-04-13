@@ -76,15 +76,16 @@
           <artifactId>maven-compiler-plugin</artifactId>
           <version>${compiler-plugin.version}</version>
         </plugin>
+        <!-- for staging with Nexus2 -->
         <plugin>
           <groupId>org.sonatype.plugins</groupId>
           <artifactId>nexus-staging-maven-plugin</artifactId>
-          <version>1.6.8</version>
+          <version>1.6.5</version>
+          <extensions>true</extensions>
           <configuration>
-            <serverId>inventage-keycloak-nexus2</serverId>
+            <serverId>inventage-portal-staging</serverId>          <!-- auch im Jenkins Config File "settings.xml" referenziert -->
             <nexusUrl>https://nexus.inventage.com</nexusUrl>
-            <stagingProfileId>ea3c1b1825f57</stagingProfileId>
-            <skipStaging>false</skipStaging>
+            <stagingProfileId>ea3c1b1825f57</stagingProfileId>          <!-- inventage-portal staging -->
           </configuration>
         </plugin>
       </plugins>
