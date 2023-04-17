@@ -2,8 +2,27 @@
           xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.1.0 http://maven.apache.org/xsd/settings-1.1.0.xsd"
           xmlns="http://maven.apache.org/SETTINGS/1.1.0">
     <servers>
+        <!-- pull docker images -->
+        <server>
+            <id>${env.DOCKER_PULL_REGISTRY}</id>
+            <username>${env.CI_REGISTRY_CREDS_USR}</username>
+            <password>${env.CI_REGISTRY_CREDS_PSW}</password>
+        </server>
+        <!-- push docker images -->
+        <server>
+            <id>${env.DOCKER_PUSH_REGISTRY}</id>
+            <username>${env.CI_REGISTRY_CREDS_USR}</username>
+            <password>${env.CI_REGISTRY_CREDS_PSW}</password>
+        </server>
+        <!-- get maven artefacts -->
         <server>
             <id>inventage-portal-group</id>
+            <username>${env.CI_NEXUS2_BITBUCKET_CREDS_USR}</username>
+            <password>${env.CI_NEXUS2_BITBUCKET_CREDS_PSW}</password>
+        </server>
+        <!-- deploy maven artefacts -->
+        <server>
+            <id>inventage-portal-staging</id>
             <username>${env.CI_NEXUS2_BITBUCKET_CREDS_USR}</username>
             <password>${env.CI_NEXUS2_BITBUCKET_CREDS_PSW}</password>
         </server>
