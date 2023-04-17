@@ -3,9 +3,9 @@
           xmlns="http://maven.apache.org/SETTINGS/1.1.0">
     <servers>
         <server>
-            <id>inventage-projectware</id>
-            <username>${env.CI_REGISTRY_CREDS_USR}</username>
-            <password>${env.CI_REGISTRY_CREDS_PSW}</password>
+            <id>inventage-portal-group</id>
+            <username>${env.CI_NEXUS2_BITBUCKET_CREDS_USR}</username>
+            <password>${env.CI_NEXUS2_BITBUCKET_CREDS_PSW}</password>
         </server>
     </servers>
     <interactiveMode>false</interactiveMode>
