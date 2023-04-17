@@ -13,7 +13,13 @@ pipeline {
 
     environment {
         LINE_SEPARATOR = '================================================================================'
-        CI_REGISTRY_CREDS = credentials('inventage-projectware')
+        IQ_SERVER_CREDENTIALS_ID = 'portal-registry-creds'
+        // read username/password from the Jenkins Credentials and store them in 3 env variables
+        // @see https://www.jenkins.io/doc/book/pipeline/jenkinsfile/#handling-credentials
+        CI_NEXUS2_BITBUCKET_CREDS = credentials('inventage-portal')
+        CI_REGISTRY_CREDS = credentials('portal-registry-creds')
+        // NPM_REGISTRY = 'https://nexus3.inventage.com/repository/inventage-portal-npm-group'
+
         BUILD_STATUS_EMAIL_RECIPIENTS = 'ktang@inventage.com'
     }
 
@@ -67,14 +73,14 @@ pipeline {
 
                 mvn("-s .jenkins/settings.xml", "-Pjenkins", "-Djava.io.tmpdir=${WORKSPACE}",  "clean", "deploy")
                 script {
-                    env.STAGING_REPOSITORY_ID = util.stagingRepositoryId('./target/nexus-staging/staging/ea3c1b1825f57.properties')
+                      env.STAGING_REPOSITORY_ID = util.stagingRepositoryId('./target/nexus-staging/staging/2784e0aacf5060.properties')
                 }
             }
         }
 
         stage ('Trigger Release Pipeline') {
             steps {
-                build job: 'Inventage/Projectware/Quarkiverse Logging Logback/RegisterCandidate', parameters: [string(name: 'nexus2StagingRepositoryId', value: "${env.STAGING_REPOSITORY_ID}")]
+                build job: 'Inventage Portal/Quarkiverse Logging Logback/RegisterCandidate', parameters: [string(name: 'nexus2StagingRepositoryId', value: "${env.STAGING_REPOSITORY_ID}")]
             }
         }
 
